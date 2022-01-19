@@ -24,6 +24,6 @@ jobs:
       - name: Build with Gradle
         uses: gradle/gradle-build-action@4137be6a8bf7d7133955359dbd952c0ca73b1021
         with:
-          gradle-version: 6.5
+          gradle-version: 7.3.2
           arguments: build
 
