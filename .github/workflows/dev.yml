@@ -1,5 +1,6 @@
 name: Build and Deploy
-
+env:
+  ARTIFACT_PREFIX: 'beer-converter-'
 on:
   push:
     branches: [ master, develop ]
@@ -21,9 +22,16 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Get project's version
+        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.3.2
           arguments: build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+          path: target/${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
 
