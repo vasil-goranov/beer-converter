@@ -32,6 +32,6 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
-          name: ${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
-          path: target/${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+          name: ${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+          path: target/${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
 
