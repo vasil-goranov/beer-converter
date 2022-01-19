@@ -39,5 +39,5 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
-          path: build/${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+          path: build/libs/${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
 
