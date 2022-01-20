@@ -30,11 +30,11 @@ jobs:
         with:
           gradle-version: 7.3.2
           arguments: build
-      - name: Create artifact with Gradle
-        uses: gradle/gradle-build-action@v2
-        with:
-          gradle-version: 7.3.2
-          arguments: jar
+#      - name: Create artifact with Gradle
+#        uses: gradle/gradle-build-action@v2
+#        with:
+#          gradle-version: 7.3.2
+#          arguments: jar
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
