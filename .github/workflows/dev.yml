@@ -23,7 +23,7 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: gradle
-      - name: Get project's version
+      - name: Get project version
         run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
@@ -40,4 +40,34 @@ jobs:
         with:
           name: ${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
           path: build/libs/${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+  publish_docker_image:
+    name: Publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Get project version
+        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
+      - name: Download the artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: vasilgoranov/${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }
+      - name: Login to DockerHub
+      - uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
 
