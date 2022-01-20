@@ -41,6 +41,7 @@ jobs:
           name: ${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
           path: build/libs/${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
   publish_docker_image:
+    needs: build
     name: Publish docker image
     runs-on: ubuntu-latest
     steps:
@@ -51,7 +52,7 @@ jobs:
       - name: Download the artifact
         uses: actions/download-artifact@v2
         with:
-          name: ${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}.jar
+          name: ${{ env.ARTIFACT_PREFIX }}${{ env.PROJECT_VERSION }}.jar
       - name: Docker meta
         id: meta
         uses: docker/metadata-action@v3
