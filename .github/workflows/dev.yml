@@ -24,17 +24,12 @@ jobs:
           distribution: 'temurin'
           cache: gradle
       - name: Get project version
-        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
+        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')"
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
           gradle-version: 7.3.2
           arguments: build
-#      - name: Create artifact with Gradle
-#        uses: gradle/gradle-build-action@v2
-#        with:
-#          gradle-version: 7.3.2
-#          arguments: jar
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -48,7 +43,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Get project version
-        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
+        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')"
       - name: Artifact download
         uses: actions/download-artifact@v2
         with:
@@ -68,5 +63,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
+          tags: ${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
