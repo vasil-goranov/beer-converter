@@ -5,33 +5,24 @@ import java.math.RoundingMode
 class DrinksMapper {
 
     static def alcoholToNumberOfBeersRatio = [
-            (ConvertableDrinks.GIN.name()): 2,
-            (ConvertableDrinks.RAKIA.name()): 4,
-            (ConvertableDrinks.WHISKEY.name()): 3,
-            (ConvertableDrinks.RUM.name()): 1
+            (ConvertableDrinks.GIN.getName()): 2,
+            (ConvertableDrinks.RAKIA.getName()): 4,
+            (ConvertableDrinks.WHISKEY.getName()): 3,
+            (ConvertableDrinks.RUM.getName()): 1
     ]
 
-    static String howManyWhiskeysIsThis(String beerQuantity) {
-        int whiskeyRatio = alcoholToNumberOfBeersRatio[ConvertableDrinks.WHISKEY.name()]
-        String result = (new BigDecimal(beerQuantity).divide(new BigDecimal(whiskeyRatio), 2, RoundingMode.HALF_UP) * 100).intValue().toString()
-        "If you had some real alcohol, it would be this much - ${result}ml"
-    }
-
-    static String howManyGinsIsThis(String beerQuantity) {
-        int ginRatio = alcoholToNumberOfBeersRatio[ConvertableDrinks.GIN.name()]
-        String result = (new BigDecimal(beerQuantity).divide(new BigDecimal(ginRatio), 2, RoundingMode.HALF_UP) * 100).intValue().toString()
-        "If you had some summer happiness, it would be this much - ${result}ml"
-    }
-
-    static String howManyRumsIsThis(String beerQuantity) {
-        int rumRatio = alcoholToNumberOfBeersRatio[ConvertableDrinks.RUM.name()]
-        String result = (new BigDecimal(beerQuantity).divide(new BigDecimal(rumRatio), 2, RoundingMode.HALF_UP) * 100).intValue().toString()
-        "If you wanted some bad hangover, you would have had this much - ${result}ml"
-    }
-
-    static String howManyRakiasIsThis(String beerQuantity) {
-        int rakiaRatio = alcoholToNumberOfBeersRatio[ConvertableDrinks.RAKIA.name()]
-        String result = (new BigDecimal(beerQuantity).divide(new BigDecimal(rakiaRatio), 2, RoundingMode.HALF_UP) * 100).intValue().toString()
-        "If you had some of your Grandpa's special, it would be this much - ${result}ml"
+    static String calculateRealAlcoholQuantity(String beerQuantity, ConvertableDrinks drink) {
+        int alcoholRatio = alcoholToNumberOfBeersRatio[drink.getName()]
+        BigDecimal quantity
+        try {
+            quantity = new BigDecimal(beerQuantity)
+            if(quantity < 0) {
+                throw new NumberFormatException("Please use valid number, greater than 0")
+            }
+        }
+        catch (NumberFormatException e) {
+            return 'Number error! ' + e.getMessage()
+        }
+        drink.getAlcoholMessage() + (quantity.divide(new BigDecimal(alcoholRatio), 2, RoundingMode.HALF_UP) * 100).intValue().toString() + 'ml'
     }
 }

@@ -1,5 +1,6 @@
 package com.telerik.beerconverter.controller
 
+import com.telerik.beerconverter.mapper.ConvertableDrinks
 import com.telerik.beerconverter.services.BeerConverterService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -20,21 +21,21 @@ class BeerConverterController {
 
     @GetMapping(value = "/toWhiskey/{quantity}", produces = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity convertBeerToWhiskey(@PathVariable String quantity) {
-        new ResponseEntity<>(beerConverterService.toWhiskey(quantity), HttpStatus.OK)
+        new ResponseEntity<>(beerConverterService.toRealAlcohol(quantity, ConvertableDrinks.WHISKEY), HttpStatus.OK)
     }
 
     @GetMapping(value = "/toRakia/{quantity}", produces = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity convertBeerToRakia(@PathVariable String quantity) {
-        new ResponseEntity<>(beerConverterService.toRakia(quantity), HttpStatus.OK)
+        new ResponseEntity<>(beerConverterService.toRealAlcohol(quantity, ConvertableDrinks.RAKIA), HttpStatus.OK)
     }
 
     @GetMapping(value = "/toGin/{quantity}", produces = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity convertBeerToGin(@PathVariable String quantity) {
-        new ResponseEntity<>(beerConverterService.toGin(quantity), HttpStatus.OK)
+        new ResponseEntity<>(beerConverterService.toRealAlcohol(quantity, ConvertableDrinks.GIN), HttpStatus.OK)
     }
 
     @GetMapping(value = "/toRum/{quantity}", produces = MediaType.TEXT_PLAIN_VALUE)
     ResponseEntity convertBeerToRum(@PathVariable('quantity') String quantity) {
-        new ResponseEntity<>(beerConverterService.toRum(quantity), HttpStatus.OK)
+        new ResponseEntity<>(beerConverterService.toRealAlcohol(quantity, ConvertableDrinks.RUM), HttpStatus.OK)
     }
 }
