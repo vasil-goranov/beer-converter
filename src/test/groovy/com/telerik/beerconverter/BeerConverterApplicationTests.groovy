@@ -30,7 +30,7 @@ class BeerConverterApplicationTests {
 		String expectedResult = service.toRealAlcohol("5,3", ConvertableDrinks.WHISKEY)
 		assert expectedResult == ('Number error! Character , is neither a decimal digit number, decimal point, nor "e" notation exponential mark.')
 		expectedResult = service.toRealAlcohol("-5", ConvertableDrinks.WHISKEY)
-		assert expectedResult == ('Number error! Please use valid number, greater than 0')
+		assert expectedResult == ('НЕ! Please use valid number, greater than 0')
 	}
 
 }
