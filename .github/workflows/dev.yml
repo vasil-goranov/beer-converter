@@ -57,7 +57,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: vasilgoranov/${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}
+          images: vasilgoranov/beer-converter/${{ env.ARTIFACT_NAME_PREFIX }}${{ env.PROJECT_VERSION }}
       - name: Login to DockerHub
         uses: docker/login-action@v1
         with:
