@@ -29,6 +29,7 @@ jobs:
           gradle-version: 7.3.2
           arguments: test
   lint:
+    needs: checkout_and_test
     name: Lint it
     runs-on: ubuntu-latest
     steps:
@@ -42,6 +43,7 @@ jobs:
           VALIDATE_DOCKERFILE_HADOLINT: false
   build_and_upload:
     name: Build and upload
+    needs: lint
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -65,7 +67,7 @@ jobs:
           name: ${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}.jar
           path: build/libs/${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}.jar
   publish_docker_image:
-    needs: build
+    needs: build_and_upload
     name: Publish docker image
     runs-on: ubuntu-latest
     steps:
