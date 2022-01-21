@@ -29,9 +29,12 @@ jobs:
           gradle-version: 7.3.2
           arguments: test
       - name: Lint Code Base
-        uses: github/super-linter@v4
+        uses: github/super-linter@v3.15.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_ALL_CODEBASE: false
+          VALIDATE_BASH: false
+          VALIDATE_DOCKERFILE_HADOLINT: false
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
