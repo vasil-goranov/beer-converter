@@ -38,7 +38,7 @@ jobs:
           gradle-version: 7.3.2
           arguments: build
       - name: Get project version
-        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
+        run: echo PROJECT_VERSION="$(gradle properties -q | grep version | awk '{print $2}')" >> "$GITHUB_ENV"
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
@@ -56,7 +56,7 @@ jobs:
         with:
           gradle-version: 7.3.2
       - name: Get project version
-        run: echo "PROJECT_VERSION=$(gradle properties -q | grep version | awk '{print $2}')" >> $GITHUB_ENV
+        run: echo PROJECT_VERSION="$(gradle properties -q | grep version | awk '{print $2}')" >> "$GITHUB_ENV"
       - name: Artifact download
         uses: actions/download-artifact@v2
         with:
