@@ -2,10 +2,11 @@ plugins {
 	id 'org.springframework.boot' version '2.6.2'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
 	id 'groovy'
+        id "org.sonarqube" version "3.3"
 }
 
 group = 'com.telerik'
-version = '0.0.1-SNAPSHOT'
+version = '1.0.0-SNAPSHOT'
 sourceCompatibility = '1.8'
 
 repositories {
@@ -17,6 +18,14 @@ dependencies {
 	implementation 'org.codehaus.groovy:groovy'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+}
+
+sonarqube {
+  properties {
+    property "sonar.projectKey", "vasil-goranov_beer-converter"
+    property "sonar.organization", "vasil-goranov"
+    property "sonar.host.url", "https://sonarcloud.io"
+  }
 }
 
 test {

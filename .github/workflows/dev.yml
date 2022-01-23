@@ -1,5 +1,6 @@
 name: Build and Deploy
-
+env:
+  ARTIFACT_NAME: 'beer-converter'
 on:
   push:
     branches: [ master, develop ]
@@ -10,8 +11,8 @@ on:
   workflow_dispatch:
   
 jobs:
-  build:
-    name: Build gradle app
+  checkout_and_test:
+    name: Checkout and test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -21,13 +22,112 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+          cache: gradle
+      - name: Run tests
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.3.2
+          arguments: test
+  lint:
+    name: Lint it
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Lint Code Base
+        uses: github/super-linter@v4
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_BASH: false
+          VALIDATE_DOCKERFILE_HADOLINT: false
+  check-for-secrets:
+    name: Check for secrets
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Yelp's detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Commit back .secrets.baseline (if it was missing)
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "build(detect-secrets): Commit the newly-generated .secrets.baseline file"
+  sonar-cloud-test:
+    name: Test with Sonar
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
+      - name: Analyze
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.3.2
+          arguments: build sonarqube --info
+  build_and_upload:
+    name: Build and upload
+    needs: [lint, check-for-secrets, checkout_and_test, sonar-cloud-test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+          cache: gradle
       - name: Build with Gradle
         uses: gradle/gradle-build-action@v2
         with:
-          gradle-version: 6.5
-      - name: Change wrapper permissions
-        run: chmod +x ./gradlew
-    
-      - name: Execute Gradle build
-        run: ./gradlew build
-
+          gradle-version: 7.3.2
+          arguments: build
+      - name: Get project version
+        run: echo PROJECT_VERSION="$(gradle properties -q | grep version | awk '{print $2}')" >> "$GITHUB_ENV"
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}.jar
+          path: build/libs/${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}.jar
+  publish_docker_image:
+    needs: build_and_upload
+    name: Publish docker image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Gradle
+        uses: gradle/gradle-build-action@v2
+        with:
+          gradle-version: 7.3.2
+      - name: Get project version
+        run: echo PROJECT_VERSION="$(gradle properties -q | grep version | awk '{print $2}')" >> "$GITHUB_ENV"
+      - name: Artifact download
+        uses: actions/download-artifact@v2
+        with:
+          name: ${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}.jar
+      - name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: vasilgoranov/${{ env.ARTIFACT_NAME }}
+      - name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}-${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}
+          labels: ${{ steps.meta.outputs.labels }}
