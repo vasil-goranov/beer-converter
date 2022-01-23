@@ -130,5 +130,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}
+          tags: ${{ steps.meta.outputs.tags }}-${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
