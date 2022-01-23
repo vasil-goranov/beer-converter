@@ -76,6 +76,7 @@ jobs:
     name: Build and upload
     needs: [lint, check-for-secrets, checkout_and_test, sonar-cloud-test]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -129,5 +130,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}-${{ env.ARTIFACT_NAME }}-${{ env.PROJECT_VERSION }}
+          tags: ${{ env.PROJECT_VERSION }}
           labels: ${{ steps.meta.outputs.labels }}
