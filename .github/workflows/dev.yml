@@ -40,6 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE_HADOLINT: false
+          VALIDATE_MARKDOWN: false
   check-for-secrets:
     name: Check for secrets
     runs-on: ubuntu-latest
@@ -76,6 +77,7 @@ jobs:
     name: Build and upload
     needs: [lint, check-for-secrets, checkout_and_test, sonar-cloud-test]
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'push' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
