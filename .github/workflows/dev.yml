@@ -40,6 +40,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE_HADOLINT: false
+          VALIDATE_MARKDOWN: false
   check-for-secrets:
     name: Check for secrets
     runs-on: ubuntu-latest
