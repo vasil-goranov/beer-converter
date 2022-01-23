@@ -29,7 +29,6 @@ jobs:
           gradle-version: 7.3.2
           arguments: test
   lint:
-    needs: checkout_and_test
     name: Lint it
     runs-on: ubuntu-latest
     steps:
@@ -41,6 +40,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE_HADOLINT: false
+  check-for-secrets:
+    name: Check for secrets
+    runs-on: 'ubuntu-latest'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Run Yelp's detect-secrets
+        uses: RobertFischer/detect-secrets-action@v2.0.0
+      - name: Commit back .secrets.baseline (if it was missing)
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: "build(detect-secrets): Commit the newly-generated .secrets.baseline file"
   build_and_upload:
     name: Build and upload
     needs: lint
