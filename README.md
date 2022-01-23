@@ -13,7 +13,7 @@ The application converts amount of beers to "real" alcohol via HTTP calls to fou
 
 example URl: http://localhost:7080/convertBeers/toRakia/15
 
-The application returns plain text which is displayed directly in the browser - no html used.
+The application returns plain text which is displayed directly in the browser - no HTML used.
 
 ### TECH STACK 
 
