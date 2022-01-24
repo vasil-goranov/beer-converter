@@ -35,9 +35,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       - name: Lint Code Base
-        uses: github/super-linter@v4
+        uses: github/super-linter/slim@v4
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VALIDATE_BASH: false
           VALIDATE_DOCKERFILE_HADOLINT: false
           VALIDATE_MARKDOWN: false
